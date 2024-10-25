@@ -8,7 +8,6 @@ const NavBar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Previous menuItems and popularSearches objects remain the same...
     const menuItems = {
         'New & Featured': {
             Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
@@ -49,7 +48,6 @@ const NavBar = () => {
         'shoes'
     ];
 
-    // Animation variants remain the same...
     const dropdownVariants = {
         hidden: { opacity: 0, y: -10 },
         visible: {
@@ -103,7 +101,6 @@ const NavBar = () => {
     return (
         <div className="relative">
             <nav className="flex items-center justify-between px-4 md:px-8 py-4 bg-white">
-                {/* Left section with logo */}
                 <div className="flex items-center">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
@@ -114,7 +111,6 @@ const NavBar = () => {
                     </motion.div>
                 </div>
 
-                {/* Center section with navigation links - Desktop */}
                 <div className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
                     {Object.entries(menuItems).map(([item, submenu]) => (
                         <div
@@ -131,7 +127,6 @@ const NavBar = () => {
                                 {item}
                             </motion.button>
 
-                            {/* Dropdown remains the same... */}
                             <AnimatePresence>
                                 {activeDropdown === item && (
                                     <motion.div
@@ -257,7 +252,6 @@ const NavBar = () => {
                 )}
             </AnimatePresence>
 
-            {/* Search Overlay remains the same... */}
             <AnimatePresence>
                 {isSearchOpen && (
                     <motion.div
