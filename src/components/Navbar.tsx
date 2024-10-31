@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { Search, Heart, ShoppingBag, Menu, X, GraduationCap } from 'lucide-react';
 import logo from "../assets/logo.png"
 
 const NavBar = () => {
@@ -107,7 +107,7 @@ const NavBar = () => {
                         transition={{ duration: 0.1 }}
                         className="cursor-pointer h-12 flex items-center"
                     >
-                        <img src={logo} alt="Logo" className="h-8 w-auto" />
+                        <GraduationCap size={24} className="text-blue-600" />
                     </motion.div>
                 </div>
 
