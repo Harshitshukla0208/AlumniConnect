@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, isMobile, onMobileClose })
         }));
     };
 
-    const handleSubCategoryClick = (subCategory: string) => {
+    const handleSubCategoryClick = (_subCategory: string) => {
         if (isMobile) {
             // Add your navigation logic here
             onMobileClose?.();
