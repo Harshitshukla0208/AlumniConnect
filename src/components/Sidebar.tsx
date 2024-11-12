@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, User, Building, BookOpen, GraduationCap, Layers, Code } from 'lucide-react';
-import { cn } from '../lib/utils';
 
 interface FilterCategory {
     name: string;
@@ -28,14 +27,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className, isMobile, onMobileClose })
 
     const handleSubCategoryClick = (_subCategory: string) => {
         if (isMobile) {
-            // Add your navigation logic here
             onMobileClose?.();
         }
     };
 
     const handleProfileClick = () => {
         if (isMobile) {
-            // Add your navigation logic here
             onMobileClose?.();
         }
     };
@@ -76,14 +73,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className, isMobile, onMobileClose })
     return (
         <div className="flex">
             <div
-                className={cn(
-                    'fixed top-0 left-0 h-screen bg-white border-r border-gray-200',
-                    'flex flex-col',
-                    'shadow-sm',
-                    'z-50',
-                    'w-80', // Fixed width for desktop
-                    className
-                )}
+                className={`fixed top-0 left-0 h-screen bg-white border-r border-gray-200 
+                            flex flex-col shadow-sm z-50 w-80 ${className || ''}`}
             >
                 {/* Header */}
                 <div className="h-16 flex items-center px-4 border-b border-gray-100">
