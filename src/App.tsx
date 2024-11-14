@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NavBar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import AlumniDashboard from './components/Dashboard';
 
 const Layout = () => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -95,12 +96,13 @@ const Layout = () => {
           className="pt-16 min-h-screen"
         >
           <div className="p-6">
-            <div className="max-w-7xl mx-auto">
+            {/* <div className="max-w-7xl mx-auto">
               <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
               <p className="mt-4 text-gray-600">
                 Welcome to your dashboard. This content will adjust based on the sidebar state.
               </p>
-            </div>
+            </div> */}
+            <AlumniDashboard />
           </div>
         </motion.main>
     </div>
