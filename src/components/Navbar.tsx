@@ -4,7 +4,7 @@ import { Search, Heart, ShoppingBag, Menu, X, GraduationCap } from 'lucide-react
 import logo from "../assets/logo.png"
 
 const NavBar = () => {
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -100,7 +100,7 @@ const NavBar = () => {
 
     return (
         <div className="relative">
-            <nav className="flex items-center justify-between px-4 md:px-8 py-4 bg-white">
+            <nav className="flex items-center justify-between px-4 md:px-8 py-4 bg-white z-40">
                 <div className="flex items-center">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
@@ -137,7 +137,7 @@ const NavBar = () => {
                                         className="fixed left-0 w-full bg-white shadow-lg"
                                         style={{
                                             top: '100%',
-                                            zIndex: 50
+                                            zIndex: 45
                                         }}
                                     >
                                         <div className="grid grid-cols-3 gap-8 p-8 mx-auto max-w-7xl">
@@ -148,7 +148,7 @@ const NavBar = () => {
                                                 >
                                                     <h3 className="mb-4 text-sm font-bold">{category}</h3>
                                                     <ul className="space-y-2">
-                                                        {items.map((subItem: string) => (
+                                                        {items.map((subItem) => (
                                                             <motion.li
                                                                 key={subItem}
                                                                 variants={dropdownVariants}
@@ -171,9 +171,7 @@ const NavBar = () => {
                     ))}
                 </div>
 
-                {/* Right section with icons and mobile menu */}
                 <div className="flex items-center space-x-4">
-                    {/* Desktop icons */}
                     <div className="hidden md:flex items-center space-x-4">
                         <motion.button
                             whileHover={{ scale: 1.1 }}
@@ -199,7 +197,6 @@ const NavBar = () => {
                         </motion.button>
                     </div>
 
-                    {/* Mobile menu button */}
                     <button onClick={() => setIsSearchOpen(true)} className="md:hidden p-2">
                         <Search className="w-5 h-5" />
                     </button>
@@ -212,7 +209,6 @@ const NavBar = () => {
                 </div>
             </nav>
 
-            {/* Mobile Menu */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
@@ -220,10 +216,9 @@ const NavBar = () => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="md:hidden bg-white shadow-lg"
+                        className="md:hidden bg-white shadow-lg z-40"
                     >
                         <div className="p-4">
-                            {/* Mobile navigation links */}
                             {Object.entries(menuItems).map(([item]) => (
                                 <motion.button
                                     key={item}
@@ -235,7 +230,6 @@ const NavBar = () => {
                                 </motion.button>
                             ))}
 
-                            {/* Mobile icons */}
                             <div className="flex items-center space-x-4 px-4 py-2 mt-4">
                                 <button onClick={() => setIsSearchOpen(true)} className="p-2">
                                     <Search className="w-5 h-5" />
@@ -259,7 +253,7 @@ const NavBar = () => {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="fixed inset-0 bg-white z-50"
+                        className="fixed inset-0 bg-white z-[60]"
                     >
                         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
                             <div className="flex items-center justify-between mb-8">
