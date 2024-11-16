@@ -1,45 +1,53 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Heart, ShoppingBag, Menu, X, GraduationCap } from 'lucide-react';
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
+
+type MenuItem = {
+  [key: string]: {
+    [category: string]: string[];
+  };
+};
+
+type ActiveDropdownType = keyof MenuItem | null;
+
+const menuItems: MenuItem = {
+    'New & Featured': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    },
+    'Men': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    },
+    'Women': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    },
+    'Kids': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    },
+    'Sale': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    },
+    'SNKRS': {
+        Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
+        'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
+        'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
+    }
+};
 
 const NavBar = () => {
-    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [activeDropdown, setActiveDropdown] = useState<ActiveDropdownType>(null);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    const menuItems = {
-        'New & Featured': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        },
-        'Men': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        },
-        'Women': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        },
-        'Kids': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        },
-        'Sale': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        },
-        'SNKRS': {
-            Featured: ['New Arrivals', 'Bestsellers', 'SNKRS Launch Calendar', 'Member Exclusive', 'Customise with Nike By You', "What's Trending"],
-            'Shop Icons': ['Air Force 1', 'Air Jordan 1', 'Air Max', 'Dunk', 'Cortez', 'Blazer', 'Pegasus', 'Vomero'],
-            'Shop By Sport': ['Running', 'Basketball', 'Football', 'Golf', 'Tennis', 'Gym and Training', 'Yoga', 'Skateboarding']
-        }
-    };
 
     const popularSearches = [
         'air force 1',
@@ -112,7 +120,7 @@ const NavBar = () => {
                 </div>
 
                 <div className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
-                    {Object.entries(menuItems).map(([item, submenu]) => (
+                    {(Object.entries(menuItems) as [keyof MenuItem, MenuItem[keyof MenuItem]][]).map(([item, submenu]) => (
                         <div
                             key={item}
                             className="relative group"
@@ -219,7 +227,7 @@ const NavBar = () => {
                         className="md:hidden bg-white shadow-lg z-40"
                     >
                         <div className="p-4">
-                            {Object.entries(menuItems).map(([item]) => (
+                            {Object.keys(menuItems).map((item) => (
                                 <motion.button
                                     key={item}
                                     className="block w-full text-left px-4 py-2 text-sm font-medium"
