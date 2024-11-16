@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, LinkedinIcon, GraduationCap, Briefcase, MapPin } from 'lucide-react';
+import { Mail, LinkedinIcon, GraduationCap, Briefcase, MapPin, Search, X } from 'lucide-react';
 
-// Inline Card Components
+// Inline Card Components remain the same...
 const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
     <div className={`bg-white rounded-lg shadow ${className}`}>
         {children}
@@ -36,7 +36,7 @@ interface ApiResponse {
     remaining: number;
 }
 
-const API_URL = 'http://localhost:3001/ran';
+const API_URL = 'http://localhost:3001';
 
 const AlumniDashboard = () => {
     const [alumni, setAlumni] = useState<AlumniData[]>([]);
@@ -45,27 +45,70 @@ const AlumniDashboard = () => {
     const [hasMore, setHasMore] = useState(true);
     const [failedImages, setFailedImages] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const observer = useRef<IntersectionObserver | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResults, setSearchResults] = useState<AlumniData[]>([]);
     const loadingRef = useRef<HTMLDivElement>(null);
+    const searchTimeout = useRef<NodeJS.Timeout>();
     const batchSize = 8;
 
-    // Debounce function to prevent multiple rapid fetch calls
-    const debounce = (func: Function, wait: number) => {
-        let timeout: NodeJS.Timeout;
-        return (...args: any[]) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func(...args), wait);
-        };
+    const handleSearch = useCallback(async (query: string) => {
+        if (query.trim() === '') {
+            setIsSearching(false);
+            setSearchResults([]);
+            return;
+        }
+
+        setLoading(true);
+        setIsSearching(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setSearchResults(data.items);
+        } catch (error) {
+            console.error('Search failed:', error);
+            setError('Failed to perform search. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Debounced search handler
+    const debouncedSearch = useCallback((query: string) => {
+        if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+        }
+        searchTimeout.current = setTimeout(() => {
+            handleSearch(query);
+        }, 300);
+    }, [handleSearch]);
+
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        debouncedSearch(query);
     };
 
+    const clearSearch = () => {
+        setSearchQuery('');
+        setIsSearching(false);
+        setSearchResults([]);
+    };
+
+    // Original fetchAlumni function remains the same...
     const fetchAlumni = useCallback(async () => {
-        if (loading || !hasMore) return;
+        if (loading || !hasMore || isSearching) return;
         
         setLoading(true);
         setError(null);
         
         try {
-            const response = await fetch(API_URL, {
+            const response = await fetch(`${API_URL}/ran`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,51 +137,41 @@ const AlumniDashboard = () => {
         } finally {
             setLoading(false);
         }
-    }, [loading, hasMore, usedIndexes]);
+    }, [loading, hasMore, usedIndexes, isSearching]);
 
-    // Optimized intersection observer setup
+    // Observer effect remains the same...
     useEffect(() => {
-        const debouncedFetch = debounce(() => {
-            if (hasMore && !loading) {
-                fetchAlumni();
-            }
-        }, 100);
-
-        observer.current = new IntersectionObserver(
+        const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting) {
-                    debouncedFetch();
+                if (entries[0].isIntersecting && !isSearching) {
+                    fetchAlumni();
                 }
             },
-            { 
-                threshold: 0.1,
-                rootMargin: '200px',
-            }
+            { threshold: 0.1 }
         );
 
         if (loadingRef.current) {
-            observer.current.observe(loadingRef.current);
+            observer.observe(loadingRef.current);
         }
 
-        return () => {
-            if (observer.current) {
-                observer.current.disconnect();
-            }
-        };
-    }, [hasMore, loading, fetchAlumni]);
+        return () => observer.disconnect();
+    }, [fetchAlumni, isSearching]);
 
     // Initial load
     useEffect(() => {
-        fetchAlumni();
-    }, []);
+        if (!isSearching) {
+            fetchAlumni();
+        }
+    }, [isSearching]);
 
+    // AlumniCard component remains the same...
     const AlumniCard = ({ alumnus, index }: { alumnus: AlumniData; index: number }) => (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
                 duration: 0.3,
-                delay: Math.min((index % batchSize) * 0.1, 0.3) // Cap maximum delay
+                delay: Math.min((index % batchSize) * 0.1, 0.3)
             }}
             className="h-full"
             layout
@@ -216,6 +249,7 @@ const AlumniDashboard = () => {
         </motion.div>
     );
 
+    // LoadingSkeleton component remains the same...
     const LoadingSkeleton = () => (
         <Card>
             <CardContent className="p-0">
@@ -244,6 +278,27 @@ const AlumniDashboard = () => {
                 <div className="mb-12 text-center">
                     <h1 className="text-4xl font-bold text-gray-800 mb-2">Alumni Directory</h1>
                     <p className="text-gray-600">Discover and connect with our distinguished alumni network</p>
+                    
+                    <div className="mt-6 max-w-2xl mx-auto relative">
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={handleSearchInputChange}
+                                placeholder="Search by name, company, batch, field, or branch..."
+                                className="w-full py-3 pl-12 pr-10 bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={clearSearch}
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2"
+                                >
+                                    <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {error && (
@@ -253,13 +308,22 @@ const AlumniDashboard = () => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {alumni.map((alumnus, index) => (
-                        <AlumniCard 
-                            key={`${alumnus.NAME}-${index}`} 
-                            alumnus={alumnus} 
-                            index={index}
-                        />
-                    ))}
+                    {isSearching
+                        ? searchResults.map((alumnus, index) => (
+                            <AlumniCard 
+                                key={`${alumnus.NAME}-${index}`} 
+                                alumnus={alumnus} 
+                                index={index}
+                            />
+                        ))
+                        : alumni.map((alumnus, index) => (
+                            <AlumniCard 
+                                key={`${alumnus.NAME}-${index}`} 
+                                alumnus={alumnus} 
+                                index={index}
+                            />
+                        ))
+                    }
                 </div>
 
                 {loading && (
@@ -270,11 +334,17 @@ const AlumniDashboard = () => {
                     </div>
                 )}
 
-                <div ref={loadingRef} className="h-4 mt-8" />
+                {!isSearching && <div ref={loadingRef} className="h-4 mt-8" />}
 
-                {!hasMore && alumni.length > 0 && (
+                {!hasMore && !isSearching && alumni.length > 0 && (
                     <div className="text-center py-8">
                         <p className="text-gray-600">You've reached the end of the list</p>
+                    </div>
+                )}
+
+                {isSearching && searchResults.length === 0 && !loading && (
+                    <div className="text-center py-8">
+                        <p className="text-gray-600">No results found for "{searchQuery}"</p>
                     </div>
                 )}
             </div>
